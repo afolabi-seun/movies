@@ -22,6 +22,7 @@
     "node-requirejs-define": "^1.0.1",
     "path": "^0.12.7",
     "performance-now": "^2.1.0",
+    "pg": "^8.8.0",
     "postgres": "^3.3.2",
     "speakeasy": "^2.0.0",
     "swagger-ui-express": "^4.3.0",
