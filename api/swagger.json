@@ -1,0 +1,634 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Swagger Movie-Api"
+    },
+    "host": "localhost:8081",
+    "basePath": "/movie/api",
+    "tags": [
+        {
+            "name": "logs",
+            "description": "Operations about errors"
+        },
+        {
+            "name": "security",
+            "description": "Operations about system security"
+        },
+        {
+            "name": "user",
+            "description": "Operations about user(s) in system"
+        },
+        {
+            "name": "movies",
+            "description": "Operations about movies in system"
+        }
+    ],
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "securityDefinitions": {
+        "uikey": {
+            "in": "header",
+            "name": "uikey",
+            "type": "apiKey"
+        },
+        "session_key": {
+            "in": "header",
+            "name": "apisessionkey",
+            "type": "apiKey"
+        }
+    },
+    "paths": {
+        "/authenticateUser": {
+            "post": {
+                "tags": [
+                    "security"
+                ],
+                "summary": "authenticate user in system",
+                "description": "",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "user to authenticate in system",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AuthenticateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/AuthenticateUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": []
+                    }
+                ]
+            }
+        },
+        "/getInfolog": {
+            "post": {
+                "tags": [
+                    "logs"
+                ],
+                "description": "retrieve info data logged in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "list of info data logged by date",
+                        "schema": {
+                            "$ref": "#/definitions/GetInfolog"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/GetInfolog"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": []
+                    }
+                ]
+            }
+        },
+        "/getErrorlog": {
+            "post": {
+                "tags": [
+                    "logs"
+                ],
+                "description": "retrieve error(s) logged in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "list of error(s) logged by date",
+                        "schema": {
+                            "$ref": "#/definitions/GetErrorlog"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/GetErrorlog"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": []
+                    }
+                ]
+            }
+        },
+        "/getDebuglog": {
+            "post": {
+                "tags": [
+                    "logs"
+                ],
+                "description": "retrieve debug data logged in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "list of debug data logged by date",
+                        "schema": {
+                            "$ref": "#/definitions/GetDebuglog"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/GetDebuglog"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": []
+                    }
+                ]
+            }
+        },
+        "/getUser": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "user(s) profile in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "profile of user in system",
+                        "schema": {
+                            "$ref": "#/definitions/GetUser"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/GetUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": [],
+                        "session_key": []
+                    }
+                ]
+            }
+        },
+        "/createUser": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "description": "user(s) profile in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "profile of user in system",
+                        "schema": {
+                            "$ref": "#/definitions/CreateUser"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/CreateUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": []
+                    }
+                ]
+            }
+        },
+        "/getMovie": {
+            "post": {
+                "tags": [
+                    "movies"
+                ],
+                "description": "movie(s) in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "movie(s) in system",
+                        "schema": {
+                            "$ref": "#/definitions/GetMovie"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/GetMovie"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": [],
+                        "session_key": []
+                    }
+                ]
+            }
+        },
+        "/createMovie": {
+            "post": {
+                "tags": [
+                    "movies"
+                ],
+                "description": "movie to be created in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "create movie in system",
+                        "schema": {
+                            "$ref": "#/definitions/CreateMovie"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/CreateMovie"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": []
+                    }
+                ]
+            }
+        },
+        "/getComment": {
+            "post": {
+                "tags": [
+                    "comment"
+                ],
+                "description": "movie(s) in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "movie(s) in system",
+                        "schema": {
+                            "$ref": "#/definitions/GetComment"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/GetComment"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": [],
+                        "session_key": []
+                    }
+                ]
+            }
+        },
+        "/createComment": {
+            "post": {
+                "tags": [
+                    "comment"
+                ],
+                "description": "movie to be created in system",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "create movie in system",
+                        "schema": {
+                            "$ref": "#/definitions/CreateComment"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/CreateComment"
+                        }
+                    },
+                    "400": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "uikey": []
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "AuthenticateUser": {
+            "type": "object",
+            "required": [
+                "userName",
+                "password"
+            ],
+            "properties": {
+                "userName": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "password": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "GetInfolog": {
+            "type": "object",
+            "required": [
+                "startDate",
+                "endDate"
+            ],
+            "properties": {
+                "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "uniqueItems": true
+                },
+                "endDate": {
+                    "type": "string",
+                    "format": "date",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "GetErrorlog": {
+            "type": "object",
+            "required": [
+                "startDate",
+                "endDate"
+            ],
+            "properties": {
+                "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "uniqueItems": true
+                },
+                "endDate": {
+                    "type": "string",
+                    "format": "date",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "GetDebuglog": {
+            "type": "object",
+            "required": [
+                "startDate",
+                "endDate"
+            ],
+            "properties": {
+                "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "uniqueItems": true
+                },
+                "endDate": {
+                    "type": "string",
+                    "format": "date",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "GetUser": {
+            "type": "object",
+            "required": [
+                "userId"
+            ],
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "CreateUser": {
+            "type": "object",
+            "required": [
+                "userName",
+                "password",
+                "firstName",
+                "lastName",
+                "email",
+                "address",
+                "country"
+            ],
+            "properties": {
+                "userName": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "password": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "firstName": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "lastName": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "email": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "address": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "country": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "GetMovie": {
+            "type": "object",
+            "required": [
+                "userId"
+            ],
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "CreateMovie": {
+            "type": "object",
+            "required": [
+                "name",
+                "description",
+                "releaseDate",
+                "ticketPrice",
+                "country",
+                "genre",
+                "photo"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "description": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "releaseDate": {
+                    "type": "string",
+                    "format": "date",
+                    "uniqueItems": true
+                },
+                "ticketPrice": {
+                    "type": "number",
+                    "uniqueItems": true
+                },
+                "country": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "genre": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "photo": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "GetComment": {
+            "type": "object",
+            "required": [
+                "userId"
+            ],
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "CreateComment": {
+            "type": "object",
+            "required": [
+                "name",
+                "comment"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "comment": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        }
+    }
+}

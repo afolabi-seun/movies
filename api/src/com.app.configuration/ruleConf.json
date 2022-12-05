@@ -1,0 +1,51 @@
+{
+  "validation": {
+    "infoLog": {
+      "startDate": "required|string",
+      "endDate": "required|string"
+    },
+    "errorLog": {
+      "startDate": "required|string",
+      "endDate": "required|string"
+    },
+    "debugLog": {
+      "startDate": "required|string",
+      "endDate": "required|string"
+    },
+    "listUsers": {
+      "userId": "string"
+    },
+    "authentication": {
+      "userName": "required|string",
+      "password": "required|string"
+    },
+    "userCreation": {
+      "userName": "required|string",
+      "password": "required|string",
+      "firstName": "required|string",
+      "lastName": "required|string",
+      "email": "required|string",
+      "address": "required|string",
+      "country": "required|string"
+    },
+    "listComment": {
+      "userId": "string"
+    },
+    "commentCreation": {
+      "name": "required|string",
+      "comment": "required|string"
+    },
+    "listMovies": {
+      "userId": "string"
+    },
+    "movieCreation": {
+      "name": "required|string",
+      "description": "required|string",
+      "releaseDate": "required|string",
+      "ticketPrice": "required|string",
+      "country": "required|string",
+      "genre": "required|string",
+      "photo": "required|string"
+    }
+  }
+}

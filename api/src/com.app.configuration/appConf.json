@@ -1,0 +1,78 @@
+{
+    "application": {
+        "name": "api application for movies",
+        "port": "8081",
+        "isProduction": false,
+        "isPooledConnection": true,
+        "apiSettings": {
+            "secretKey": "783b3s9i3jiis9g3hss83h3b8s7b393h3u",
+            "uiKey": "movieKitkey",
+            "salt": "290f36fd3a256e5e8d0ef3b05f7272ee",
+            "algorithm": "aes-256-ctr",
+            "session": {
+                "expiry": "10h"
+            }
+        },
+        "tokenSettings": {
+            "digits": 6,
+            "step": 60,
+            "window": 10
+        },
+        "logs": {
+            "type": {
+                "info": {
+                    "path": "/../../views/logs/info.txt",
+                    "description": "Reletive path where generic error files will be saved"
+                },
+                "error": {
+                    "path": "/../../views/logs/error.txt",
+                    "description": "Reletive path where generic error files will be saved"
+                },
+                "debug": {
+                    "path": "/../../views/logs/debug.txt",
+                    "description": "Reletive path where generic error files will be saved"
+                }
+            }
+        },
+        "timeSettings": {
+            "startTimeStamp": " 00:00:00",
+            "endTimeStamp": " 23:59:59"
+        }
+    },
+    "error": {
+        "dataBaseError": {
+            "code": 100,
+            "description": "A database error has occurred. Contact your system administrator."
+        },
+        "unauthorized": {
+            "code": 401,
+            "description": "Unauthorized"
+        },
+        "badRequest": {
+            "code": 400,
+            "description": "Bad Request"
+        },
+        "notFound": {
+            "code": 404,
+            "description": "Not Found"
+        },
+        "forbidden": {
+            "code": 403,
+            "description": "Forbidden",
+            "message": "Unauthorised access, new session required"
+        },
+        "forbiddenUiKey": {
+            "code": 405,
+            "description": "Forbidden",
+            "message": "Unauthorised access, invalid uiKey. New uiKey required"
+        },
+        "internalServerError": {
+            "code": 500,
+            "description": "Internal Server Error"
+        },
+        "notImplemented": {
+            "code": 501,
+            "description": "Not Implemented"
+        }
+    }
+}

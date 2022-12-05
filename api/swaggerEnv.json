@@ -1,0 +1,12 @@
+{
+    "Swagger": {
+        "dev": {
+            "host": "localhost:8081",
+            "basePath": "/movie/api"
+        },
+        "prod": {
+            "host": "",
+            "basePath": "/movie/api"
+        }
+    }
+}
