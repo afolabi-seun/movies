@@ -14,7 +14,7 @@ define(function () {
             validation.Validator(req.body, validationRule, {}, (err, status) => {
                 if (!status) {
                     dispatch.SendBadRequestMessage(res, err);
-                    logger.error('/authentication', err);
+                    logger.error('/authenticateUser', err);
                 } else {
                     var userName = req.body.userName,
                         password = req.body.password,
@@ -23,14 +23,14 @@ define(function () {
                         jsnReq = { userName: userName, password: hshPassword, session: session },
                         jsnDta = JSON.stringify(jsnReq);
 
-                    logger.info('/authentication', jsnDta);
+                    logger.info('/authenticateUser', jsnDta);
 
                     let params = { userName: userName, password: hshPassword, session: session };
                     authDao.AuthenticationSQL(params, (err, data) => {
                         if (err) {
                             dispatch.SendDataBaseErrorMessage(res, err);
                         } else {
-                            logger.info('/authentication', data);
+                            logger.info('/authenticateUser', data);
                             var dt = JSON.parse(data);
                             dispatch.SendGenricMessage(res, dt);
                         }
@@ -38,8 +38,8 @@ define(function () {
                 }
             });
         } catch (e) {
-            logger.error('/authentication', e);
-            dispatch.DispatchErrorMessage(res, 'application error in Authentication()..');
+            logger.error('/authenticateUser', e);
+            dispatch.DispatchErrorMessage(res, 'application error in AuthenticateUser()..');
         }
     }
 
@@ -104,7 +104,6 @@ define(function () {
                         } else {
                             var dt = JSON.parse(data);
                             logger.info('/createUser', data);
-
                             dispatch.SendGenricMessage(res, dt);
                         }
                     });

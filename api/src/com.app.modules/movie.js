@@ -14,7 +14,7 @@ define(function () {
             validation.Validator(req.body, validationRule, {}, (err, status) => {
                 if (!status) {
                     dispatch.SendBadRequestMessage(res, err);
-                    logger.error('/getUser', err);
+                    logger.error('/getMovie', err);
                 } else {
                     var profileId = req.body.profileId,
                         session = req.headers['apisessionkey'],
@@ -22,7 +22,7 @@ define(function () {
                     var jsnReq = { profileId: profileId, session: session, channel: channel },
                         jsnDta = JSON.stringify(jsnReq);
 
-                    logger.info('/getUserDetails', jsnDta);
+                    logger.info('/getMovie', jsnDta);
 
                     let parm = { profileId: profileId, session: session, channel: channel, jsonData: jsnDta };
                     mvieDao.ListMovieSQL(parm, (err, data) => {
@@ -30,15 +30,15 @@ define(function () {
                             dispatch.SendDataBaseErrorMessage(res, err);
                         } else {
                             var dt = JSON.parse(data);
-                            logger.info('/getUser', data);
+                            logger.info('/getMovie', data);
                             dispatch.SendGenricMessage(res, dt);
                         }
                     });
                 }
             });
         } catch (e) {
-            logger.error('/getUser', e);
-            dispatch.DispatchErrorMessage(res, 'application error in GetUser()..');
+            logger.error('/getMovie', e);
+            dispatch.DispatchErrorMessage(res, 'application error in GetMovie()..');
         }
     }
 
@@ -48,7 +48,7 @@ define(function () {
             validation.Validator(req.body, validationRule, {}, (err, status) => {
                 if (!status) {
                     dispatch.SendBadRequestMessage(res, err);
-                    logger.error('/createUser', err);
+                    logger.error('/createMovie', err);
                 } else {
                     var name = req.body.name,
                         description = req.body.description,
@@ -60,7 +60,7 @@ define(function () {
                         jsnReq = { name: name, description: description, releaseDate: releaseDate, ticketPrice: ticketPrice, country: country, genre: genre, photo: photo },
                         jsnDta = JSON.stringify(jsnReq);
 
-                    logger.info('/createUser', jsnDta);
+                    logger.info('/createMovie', jsnDta);
 
                     let movie = new mvieDao(name, description, releaseDate, ticketPrice, country, genre, photo);
                     movie.CreateMovieSQL((err, data) => {
@@ -68,15 +68,15 @@ define(function () {
                             dispatch.SendDataBaseErrorMessage(res, err);
                         } else {
                             var dt = JSON.parse(data);
-                            logger.info('/createUser', data);
+                            logger.info('/createMovie', data);
                             dispatch.SendGenricMessage(res, dt);
                         }
                     });
                 }
             });
         } catch (e) {
-            logger.error('/createUser', e);
-            dispatch.DispatchErrorMessage(res, 'application error in CreateUser()..');
+            logger.error('/createMovie', e);
+            dispatch.DispatchErrorMessage(res, 'application error in CreateMovie()..');
         }
     }
 

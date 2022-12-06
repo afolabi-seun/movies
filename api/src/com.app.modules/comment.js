@@ -22,8 +22,8 @@ define(function () {
             });
 
         } catch (e) {
-            logger.error('/getUser', e);
-            dispatch.DispatchErrorMessage(res, 'application error in GetUser()..');
+            logger.error('/getComments', e);
+            dispatch.DispatchErrorMessage(res, 'application error in GetComments()..');
         }
     }
 
@@ -33,7 +33,7 @@ define(function () {
             validation.Validator(req.body, validationRule, {}, (err, status) => {
                 if (!status) {
                     dispatch.SendBadRequestMessage(res, err);
-                    logger.error('/createUser', err);
+                    logger.error('/createComment', err);
                 } else {
                     var userId = req.body.userId,
                         movieId = req.body.movieId,
@@ -41,7 +41,7 @@ define(function () {
                         jsnReq = { userId: userId, movieId: movieId, comment: comment },
                         jsnDta = JSON.stringify(jsnReq);
 
-                    logger.info('/createUser', jsnDta);
+                    logger.info('/createComment', jsnDta);
 
                     let newUser = new commentDAO(userId, movieId, comment);
                     newUser.CreateUserSQL((err, data) => {
@@ -49,26 +49,15 @@ define(function () {
                             dispatch.SendDataBaseErrorMessage(res, err);
                         } else {
                             var dt = JSON.parse(data);
-                            logger.info('/createUser', data);
-                            switch (dt.status.toLowerCase()) {
-                                case "ok":
-                                    var subject = 'New Profile',
-                                        messg = { firstName, lastName, password, email },
-                                        options = { email, messg: messg, subject: subject };
-                                    msg.SendUserMsg(options);
-                                    dispatch.SendGenricMessage(res, dt);
-                                    break;
-                                default:
-                                    dispatch.SendGenricMessage(res, dt);
-                                    break
-                            }
+                            logger.info('/createComment', data);
+                            dispatch.SendGenricMessage(res, dt);
                         }
                     });
                 }
             });
         } catch (e) {
-            logger.error('/createUser', e);
-            dispatch.DispatchErrorMessage(res, 'application error in CreateUser()..');
+            logger.error('/createComment', e);
+            dispatch.DispatchErrorMessage(res, 'application error in CreateComment()..');
         }
     }
 
