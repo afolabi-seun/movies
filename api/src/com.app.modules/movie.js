@@ -53,7 +53,7 @@ define(function () {
                     var name = req.body.name,
                         description = req.body.description,
                         releaseDate = req.body.releaseDate,
-                        ticketPrice = req.body.ticketPrice,
+                        ticketPrice = PparseFloat(req.body.ticketPrice),
                         country = req.body.countryId,
                         genre = req.body.genre,
                         photo = req.body.photo,

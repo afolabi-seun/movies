@@ -22,7 +22,7 @@ class CommentDAO {
 
     static ListCommentSQL(obj, callback) {
         let params = (`'${null}'`)
-        let sql = `call proc_get_comment(${params})`
+        let sql = `call proc_get_comments(${params})`
         db.Query(sql, function (err, ret) {
             if (err) {
                 callback(err, null);
