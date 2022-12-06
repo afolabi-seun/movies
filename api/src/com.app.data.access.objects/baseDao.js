@@ -34,7 +34,6 @@ define(function () {
     const resolveResponse = function (results, callback) {
         try {
             var data = results.rows[0];
-            console.log('database response', data);
             switch (data) {
                 case undefined:
                     const resp = { status: 'Failed', message: 'An error occured while trying to resolve database json response' };
