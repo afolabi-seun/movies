@@ -1,0 +1,2 @@
+2022-12-06 13:00:23|/authentication|{"userName":"demo","password":"80737ae95c9b829e4311768736c5eb5282e24ed92f863a242ad30148b11290d94547c3a7214a45cbd25a5ff8e7e0a52cf8662219e1b9f8880d0adf2f9e8e946a","session":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZW1vIiwidXNlck5hbWUiOiJwYXNzd29yZCIsImlhdCI6MTY3MDMzMTYyMywiZXhwIjoxNjcwMzY3NjIzfQ.S2Vy82NHW0y6EIA1Tc81QbrYUB0AxTrVJ8I-Q7XNitA"}
+2022-12-06 13:00:24|/authentication|{"status":"OK","message":"Login Successful!"}

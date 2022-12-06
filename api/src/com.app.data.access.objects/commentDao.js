@@ -9,7 +9,7 @@ class CommentDAO {
     }
 
     CreateCommentSQL(callback) {
-        let params = (`'${this.userId}','${this.name}','${this.comment}'`);
+        let params = (`'${this.userId}','${this.name}','${this.comment}','${null}'`);
         let sql = `call proc_comment_create(${params})`;
         db.Query(sql, function (err, ret) {
             if (err) {
@@ -21,7 +21,7 @@ class CommentDAO {
     }
 
     static ListCommentSQL(obj, callback) {
-        let params = (``)
+        let params = (`'${null}'`)
         let sql = `call proc_get_comment(${params})`
         db.Query(sql, function (err, ret) {
             if (err) {

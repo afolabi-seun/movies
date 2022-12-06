@@ -33,23 +33,24 @@ define(function () {
 
     const resolveResponse = function (results, callback) {
         try {
-            var data = results[0];
+            var data = results.rows[0];
+            console.log('database response', data);
             switch (data) {
                 case undefined:
                     const resp = { status: 'Failed', message: 'An error occured while trying to resolve database json response' };
                     callback(resp, null);
                     break;
                 default:
-                    var dta = results[0][0].v_responseMessage,
+                    var dta = results.rows[0].flag,
                         res;
 
                     switch (dta) {
                         case undefined:
-                            res = results[0][0].responseMessage;
+                            res = results.rows[0].flag;
                             callback(null, res);
                             break;
                         default:
-                            res = results[0][0].v_responseMessage;
+                            res = results.rows[0].flag;
                             callback(null, res);
                             break;
                     }

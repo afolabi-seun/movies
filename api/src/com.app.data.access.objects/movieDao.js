@@ -14,7 +14,7 @@ class UserDAO {
 
     CreateMovieSQL(callback) {
         let params = (`'${this.name}','${this.description}','${this.releaseDate}','${this.ticketPrice}',
-                       '${this.genre}','${this.photo}','${this.countryId}'`);
+                       '${this.genre}','${this.photo}','${this.countryId}','${null}'`);
         let sql = `call proc_movies_create(${params})`;
         db.Query(sql, function (err, ret) {
             if (err) {
@@ -26,7 +26,7 @@ class UserDAO {
     }
 
     static ListMovieSQL(obj, callback) {
-        let params = (``)
+        let params = (`'${null}'`)
         let sql = `call proc_get_movie(${params})`
         db.Query(sql, function (err, ret) {
             if (err) {
