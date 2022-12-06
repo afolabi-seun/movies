@@ -69,18 +69,7 @@ define(function () {
                         } else {
                             var dt = JSON.parse(data);
                             logger.info('/createUser', data);
-                            switch (dt.status.toLowerCase()) {
-                                case "ok":
-                                    var subject = 'New Profile',
-                                        messg = { firstName, lastName, password, email },
-                                        options = { email, messg: messg, subject: subject };
-                                    msg.SendUserMsg(options);
-                                    dispatch.SendGenricMessage(res, dt);
-                                    break;
-                                default:
-                                    dispatch.SendGenricMessage(res, dt);
-                                    break
-                            }
+                            dispatch.SendGenricMessage(res, dt);
                         }
                     });
                 }
