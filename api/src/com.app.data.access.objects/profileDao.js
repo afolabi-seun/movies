@@ -38,7 +38,7 @@ class ProfileDAO {
   }
 
   static AuthenticationSQL(obj, callback) {
-    let params = (`'${obj.userName}','${obj.password}','${null}'`);
+    let params = (`'${obj.userName}','${obj.password}','${obj.session}','${null}'`);
     let sql = `call proc_validate_user(${params})`;
     db.Query(sql, function (err, ret) {
       if (err) {

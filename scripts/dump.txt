@@ -385,15 +385,20 @@ END $procedure$;
 --
 -- Procedure structure for proc_validate_user
 --
-CREATE OR REPLACE PROCEDURE proc_validate_user(v_user_id varchar(50), v_password varchar(500), INOUT flag text)
+CREATE OR REPLACE PROCEDURE proc_validate_user(v_user_id varchar(50), v_password varchar(500), v_session varchar(10000), INOUT flag text)
  LANGUAGE plpgsql
  AS $procedure$
+ DECLARE v_userId         app_users.id%TYPE;
  DECLARE v_db_user_pwd    app_users.userpassword%TYPE;
+ DECLARE v_firstname      app_users.firstname%TYPE;
+ DECLARE v_lastname       app_users.lastname%TYPE;
+ DECLARE v_email          app_users.email%TYPE;
 
- DECLARE v_err_mesg     varchar(32767);
- DECLARE v_err_state    varchar(32767);
+ DECLARE v_err_mesg        varchar(32767);
+ DECLARE v_err_state       varchar(32767);
+ DECLARE v_user_json     TEXT;
+ DECLARE v_result_json     TEXT; 
 
- DECLARE v_result_json    	TEXT;
  BEGIN
 	  
 	  SELECT userpassword INTO v_db_user_pwd 
@@ -405,7 +410,17 @@ CREATE OR REPLACE PROCEDURE proc_validate_user(v_user_id varchar(50), v_password
         --Return param
         flag :=v_result_json;
       ELSE
-          v_result_json := '{"status":"OK","message":"Login Successful!"}';
+         SELECT id, firstname,lastname, email INTO v_userId, v_firstname, v_lastname, v_email
+         FROM app_users WHERE username = v_user_id;
+        
+           v_user_json := '{"USER_ID":"'|| v_userId
+		   || '","FIRST_NAME":"'|| v_firstname
+           || '","LAST_NAME":"'||  v_lastname
+           || '","EMAIL":"'|| v_email
+           || '","SESSION_ID":"'|| v_session
+           || '"}';
+        
+          v_result_json := ( '{"status":"OK","message":"Login Successful!","loginDetail":' || v_user_json || '}' );
           --Return param
           flag :=v_result_json;
       END IF;
