@@ -299,7 +299,7 @@ END $procedure$;
 --
 -- Procedure structure for proc_comment_create
 --
-CREATE OR REPLACE PROCEDURE proc_comment_create(v_user_id varchar(15), movie_id varchar(30), user_comments varchar(100), INOUT flag text)
+CREATE OR REPLACE PROCEDURE proc_comment_create(v_user_id varchar(15), v_movie_id varchar(30), v_comments varchar(100), INOUT flag text)
  LANGUAGE plpgsql
  AS $procedure$
  DECLARE v_comment_id    app_comments.id%TYPE;
@@ -314,7 +314,7 @@ CREATE OR REPLACE PROCEDURE proc_comment_create(v_user_id varchar(15), movie_id 
    
 
        INSERT INTO app_comments(id, user_id, movie_id, user_comments) 
-       VALUES (v_comment_id, v_user_id, v_comment);	
+       VALUES (v_comment_id, v_user_id, v_movie_id, v_comments);	
 
         v_result_json := '{"status":"OK","message":"Comment created successfully","CommentId":"'||v_comment_id||'"}';
        
