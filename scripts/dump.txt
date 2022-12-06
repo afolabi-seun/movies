@@ -21,11 +21,11 @@ CREATE INDEX app_users_id_idx ON app_users USING btree (id, username);
 CREATE TABLE app_comments (
 	id varchar(15) NOT NULL,
 	user_id varchar(15) NOT NULL,
-	movie_name varchar(30) NOT NULL,
+	movie_id varchar(30) NOT NULL,
 	user_comments varchar(100) NOT NULL,
-	CONSTRAINT app_comments_pk PRIMARY KEY (id)
+	CONSTRAINT app_comments_fk FOREIGN KEY (user_id) REFERENCES public.app_users(id)
 );
-CREATE INDEX app_comments_id_idx ON app_comments USING btree (id, user_id);
+CREATE INDEX app_comments_id_idx ON app_comments USING btree (id, user_id, movie_id);
 
 --
 -- Table structure for table app_movies
@@ -298,7 +298,7 @@ END $procedure$;
 --
 -- Procedure structure for proc_comment_create
 --
-CREATE OR REPLACE PROCEDURE proc_comment_create(v_user_id varchar(15), v_movie_name varchar(30), v_comment varchar(100), INOUT flag text)
+CREATE OR REPLACE PROCEDURE proc_comment_create(v_user_id varchar(15), movie_id varchar(30), user_comments varchar(100), INOUT flag text)
  LANGUAGE plpgsql
  AS $procedure$
  DECLARE v_comment_id    app_comments.id%TYPE;
@@ -309,11 +309,11 @@ CREATE OR REPLACE PROCEDURE proc_comment_create(v_user_id varchar(15), v_movie_n
  DECLARE v_result_json    	TEXT;
  BEGIN
 	  
-	SELECT fn_sm_get_seq('CommentId', 'PRO000001122367') into v_comment_id;
+	SELECT fn_sm_get_seq('CommentId', v_user_id) into v_comment_id;
    
 
-       INSERT INTO app_comments(id, movie_name, user_comment) 
-       VALUES (v_comment_id, v_movie_name, v_comment);	
+       INSERT INTO app_comments(id, user_id, movie_id, user_comments) 
+       VALUES (v_comment_id, v_user_id, v_comment);	
 
         v_result_json := '{"status":"OK","message":"Comment created successfully","CommentId":"'||v_comment_id||'"}';
        

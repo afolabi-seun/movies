@@ -2,14 +2,14 @@ var db = require('./baseDao');
 
 class CommentDAO {
 
-    constructor(userId, name, comment) {
+    constructor(userId, movieId, comment) {
         this.userId = userId;
-        this.name = name;
+        this.movieId = movieId;
         this.comment = comment;
     }
 
     CreateCommentSQL(callback) {
-        let params = (`'${this.userId}','${this.name}','${this.comment}','${null}'`);
+        let params = (`'${this.userId}','${this.movieId}','${this.comment}','${null}'`);
         let sql = `call proc_comment_create(${params})`;
         db.Query(sql, function (err, ret) {
             if (err) {

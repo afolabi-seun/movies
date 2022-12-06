@@ -49,14 +49,15 @@ define(function () {
                     dispatch.SendBadRequestMessage(res, err);
                     logger.error('/createUser', err);
                 } else {
-                    var name = req.body.name,
+                    var userId = req.body.userId,
+                        movieId = req.body.movieId,
                         comment = req.body.comment,
-                        jsnReq = { name: name, comment: comment },
+                        jsnReq = { userId: userId, movieId: movieId, comment: comment },
                         jsnDta = JSON.stringify(jsnReq);
 
                     logger.info('/createUser', jsnDta);
 
-                    let newUser = new commentDAO(name, comment);
+                    let newUser = new commentDAO(userId, movieId, comment);
                     newUser.CreateUserSQL((err, data) => {
                         if (err) {
                             dispatch.SendDataBaseErrorMessage(res, err);
