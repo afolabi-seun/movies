@@ -616,11 +616,16 @@
         "CreateComment": {
             "type": "object",
             "required": [
-                "name",
+                "userId",
+                "movieId",
                 "comment"
             ],
             "properties": {
-                "name": {
+                "userId": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "movieId": {
                     "type": "string",
                     "uniqueItems": true
                 },

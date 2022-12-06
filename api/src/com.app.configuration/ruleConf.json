@@ -32,7 +32,8 @@
       "userId": "string"
     },
     "commentCreation": {
-      "name": "required|string",
+      "userId": "required|string",
+      "movieId": "required|string",
       "comment": "required|string"
     },
     "listMovies": {
