@@ -43,8 +43,8 @@ define(function () {
 
                     logger.info('/createComment', jsnDta);
 
-                    let newUser = new commentDAO(userId, movieId, comment);
-                    newUser.CreateUserSQL((err, data) => {
+                    let comments = new commentDAO(userId, movieId, comment);
+                    comments.CreateCommentSQL((err, data) => {
                         if (err) {
                             dispatch.SendDataBaseErrorMessage(res, err);
                         } else {
