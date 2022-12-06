@@ -59,7 +59,7 @@ CREATE INDEX app_sequence_mast_seq_name_idx ON app_sequence_mast USING btree (se
 
 
 INSERT INTO app_sequence_mast(seq_name, seq_prefix, seq_length, seq_value, seq_status, seq_date)
-VALUES('UserId','USR',12,0,'A','20221201'),('MovieId','MVE',12,0,'A','20221201');
+VALUES('UserId','USR',12,0,'A','20221201'),('MovieId','MVE',12,0,'A','20221201'),('CommentId','COM',12,0,'A','20221201');
 
 
 --
