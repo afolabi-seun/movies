@@ -32,16 +32,16 @@ CREATE INDEX app_comments_id_idx ON app_comments USING btree (id, user_id, movie
 --
 CREATE TABLE app_movies (
 	id varchar(15) NOT NULL,
-	"name" varchar(30) NOT NULL,
+	movie_name varchar(30) NOT NULL,
 	description varchar(100) NOT NULL,
-	release_date date NOT NULL,
+	release_date varchar(30) NOT NULL,
 	ticket_price float8 NOT NULL,
 	country varchar(50) NOT NULL,
-	genre json NOT NULL,
+	genre text NOT NULL,
 	photo varchar(150) NULL,
 	CONSTRAINT app_movies_pk PRIMARY KEY (id)
 );
-CREATE INDEX app_movies_id_idx ON app_movies USING btree (id);
+CREATE INDEX app_movies_id_idx ON public.app_movies USING btree (id);
 
 --
 -- Table structure for table app_sequence_mast
@@ -155,10 +155,9 @@ CREATE OR REPLACE PROCEDURE proc_get_movie(INOUT flag text)
  AS $procedure$
 
 	DECLARE cur_movies CURSOR FOR
-        SELECT id, name, description, 
+        SELECT id, movie_name, description, 
                release_date, ticket_price, country, genre, photo
-        FROM app_movies
-        WHERE wm.profile_id = v_profile_id;
+        FROM app_movies;
 
 	DECLARE v_movies_json       TEXT;
     DECLARE v_result_json    	TEXT; 
@@ -170,7 +169,7 @@ CREATE OR REPLACE PROCEDURE proc_get_movie(INOUT flag text)
 	 FOR movie IN cur_movies LOOP
          v_movies_json :=v_movies_json
 		   ||	'{"MOVIE_ID":"'|| movie.id
-           || '","NAME":"'|| movie.name
+           || '","NAME":"'|| movie.movie_name
            || '","DESCRIPTION":"'|| movie.description
            || '","RELEASE_DATE":"'|| movie.release_date
            || '","TICKET_PRICE":"'|| movie.ticket_price
@@ -200,9 +199,11 @@ CREATE OR REPLACE PROCEDURE proc_get_movie(INOUT flag text)
        
         --Return param
         v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
-    
+       
+       
  flag :=v_result_json;
-END $procedure$;
+END $procedure$
+;
 
 --
 -- Procedure structure for proc_user_create
@@ -339,8 +340,10 @@ CREATE OR REPLACE PROCEDURE proc_get_comments(INOUT flag text)
  AS $procedure$
 
 	DECLARE cur_comments CURSOR FOR
-        SELECT id, movie_name, user_comments
-        FROM app_comments;
+        SELECT com.id, usr.firstname, usr.lastname, mov.movie_name, mov.description , com.user_comments
+        FROM app_comments com
+        INNER JOIN app_users usr on com.user_id =usr.id 
+        INNER JOIN app_movies mov on com.movie_id  = mov.id ;
 
 	DECLARE v_comm_json         TEXT;
     DECLARE v_result_json    	TEXT; 
@@ -353,6 +356,9 @@ CREATE OR REPLACE PROCEDURE proc_get_comments(INOUT flag text)
          v_comm_json :=v_comm_json
 		   ||	'{"MOVIE_ID":"'|| comm.id
            || '","MOVIE_NAME":"'|| comm.movie_name
+           || '","MOVIE_DESCRIPTION":"'|| comm.description
+           || '","FIRSTNAME":"'|| comm.firstname
+           || '","LASTNAME":"'|| comm.lastname
            || '","USER_COMMENTS":"'|| comm.user_comments
            || '"},';
  	 END LOOP;
@@ -380,7 +386,7 @@ CREATE OR REPLACE PROCEDURE proc_get_comments(INOUT flag text)
        
        
  flag :=v_result_json;
-END $procedure$;
+END $procedure$; 
 
 --
 -- Procedure structure for proc_validate_user
