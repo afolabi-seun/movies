@@ -340,7 +340,7 @@ CREATE OR REPLACE PROCEDURE proc_get_comments(INOUT flag text)
  AS $procedure$
 
 	DECLARE cur_comments CURSOR FOR
-        SELECT com.id, usr.firstname, usr.lastname, mov.movie_name, mov.description , com.user_comments
+        SELECT com.id, mov.id as movie_id, usr.firstname, usr.lastname, mov.movie_name, mov.description , com.user_comments
         FROM app_comments com
         INNER JOIN app_users usr on com.user_id =usr.id 
         INNER JOIN app_movies mov on com.movie_id  = mov.id ;
@@ -354,7 +354,8 @@ CREATE OR REPLACE PROCEDURE proc_get_comments(INOUT flag text)
 	 v_comm_json := '[';
 	 FOR comm IN cur_comments LOOP
          v_comm_json :=v_comm_json
-		   ||	'{"MOVIE_ID":"'|| comm.id
+		   ||	'{"COMMENT_ID":"'|| comm.id
+		   || '","MOVIE_ID":"'|| comm.movie_id
            || '","MOVIE_NAME":"'|| comm.movie_name
            || '","MOVIE_DESCRIPTION":"'|| comm.description
            || '","FIRSTNAME":"'|| comm.firstname
@@ -386,7 +387,7 @@ CREATE OR REPLACE PROCEDURE proc_get_comments(INOUT flag text)
        
        
  flag :=v_result_json;
-END $procedure$; 
+END $procedure$;
 
 --
 -- Procedure structure for proc_validate_user
