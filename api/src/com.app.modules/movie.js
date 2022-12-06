@@ -25,7 +25,7 @@ define(function () {
                     logger.info('/getUserDetails', jsnDta);
 
                     let parm = { profileId: profileId, session: session, channel: channel, jsonData: jsnDta };
-                    userDao.GetUserSQL(parm, (err, data) => {
+                    mvieDao.ListMovieSQL(parm, (err, data) => {
                         if (err) {
                             dispatch.SendDataBaseErrorMessage(res, err);
                         } else {

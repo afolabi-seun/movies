@@ -15,7 +15,7 @@ class ProfileDAO {
   CreateUserSQL(callback) {
     let params = (`'${this.userName}','${this.userPswd}','${this.firstName}','${this.lastName}',
                    '${this.email}','${this.address}','${this.country}'`);
-    let sql = `call fn_profile_create(${params})`;
+    let sql = `call proc_user_create(${params})`;
     db.Query(sql, function (err, ret) {
       if (err) {
         callback(err, null);
@@ -26,8 +26,8 @@ class ProfileDAO {
   }
 
   static ListUserSQL(obj, callback) {
-    let params = (`'${obj.profileId}','${obj.session}'`)
-    let sql = `call fn_get_profile(${params})`
+    let params = (``)
+    let sql = `call poc_get_user(${params})`
     db.Query(sql, function (err, ret) {
       if (err) {
         callback(err, null);
@@ -40,7 +40,7 @@ class ProfileDAO {
   static AuthenticationSQL(obj, callback) {
     let params = (`'${obj.userName}','${obj.password}','${obj.session}',
                   '${obj.channel}','${obj.jsonData}'`);
-    let sql = `call fn_profile_login(${params})`;
+    let sql = `call proc_validate_user(${params})`;
     db.Query(sql, function (err, ret) {
       if (err) {
         callback(err, null);

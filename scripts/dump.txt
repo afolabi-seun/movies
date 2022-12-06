@@ -1,0 +1,423 @@
+
+--
+-- Table structure for table app_users
+--
+CREATE TABLE app_users (
+	id varchar(15) NOT NULL,
+	username varchar(50) NOT NULL,
+	userpassword varchar(500) NOT NULL,
+	firstname varchar(100) NOT NULL,
+	lastname varchar(100) NOT NULL,
+	email varchar(100) NOT NULL,
+	address varchar(800) NOT NULL,
+	country varchar(50) NOT NULL,
+	CONSTRAINT app_users_pk PRIMARY KEY (id)
+);
+CREATE INDEX app_users_id_idx ON app_users USING btree (id, username);
+
+--
+-- Table structure for table app_comments
+--
+CREATE TABLE app_comments (
+	id varchar(15) NOT NULL,
+	user_id varchar(15) NOT NULL,
+	movie_name varchar(30) NOT NULL,
+	user_comments varchar(100) NOT NULL,
+	CONSTRAINT app_comments_pk PRIMARY KEY (id)
+);
+CREATE INDEX app_comments_id_idx ON app_comments USING btree (id, user_id);
+
+--
+-- Table structure for table app_movies
+--
+CREATE TABLE app_movies (
+	id varchar(15) NOT NULL,
+	"name" varchar(30) NOT NULL,
+	description varchar(100) NOT NULL,
+	release_date date NOT NULL,
+	ticket_price float8 NOT NULL,
+	country varchar(50) NOT NULL,
+	genre json NOT NULL,
+	photo varchar(150) NULL,
+	CONSTRAINT app_movies_pk PRIMARY KEY (id)
+);
+CREATE INDEX app_movies_id_idx ON app_movies USING btree (id);
+
+--
+-- Table structure for table app_sequence_mast
+--
+CREATE TABLE app_sequence_mast (
+	seq_name varchar(40) NOT NULL,
+	seq_prefix varchar(20) NULL,
+	seq_length numeric NULL DEFAULT 0,
+	seq_value numeric NULL DEFAULT 0,
+	seq_status bpchar(1) NULL DEFAULT 'A',
+	seq_date varchar(20) NULL,
+	CONSTRAINT app_sequence_mast_pk PRIMARY KEY (seq_name)
+);
+CREATE INDEX app_sequence_mast_seq_name_idx ON app_sequence_mast USING btree (seq_name);
+
+
+INSERT INTO app_sequence_mast(seq_name, seq_prefix, seq_length, seq_value, seq_status, seq_date)
+VALUES('UserId','USR',12,0,'A','20221201'),('MovieId','MVE',12,0,'A','20221201');
+
+
+--
+-- Function structure for fn_sm_get_seq
+--
+CREATE OR REPLACE FUNCTION fn_sm_get_seq(v_seq_name varchar(10))
+ RETURNS varchar(30)
+ LANGUAGE plpgsql
+ AS $function$
+    DECLARE v_seq          varchar(30);
+    DECLARE v_seq_prx      varchar(30);
+    DECLARE v_seq_val      numeric;
+    DECLARE v_seq_len      int;
+    DECLARE v_seq_count    numeric;
+    DECLARE v_seq_1        varchar(50);
+    DECLARE v_err_mesg     varchar(32767);
+    DECLARE v_err_state    varchar(32767);
+ BEGIN
+	
+	SELECT COUNT(*) From sw_sequence_mast WHERE seq_name = v_seq_name and seq_status ='A' INTO v_seq_count;
+
+        IF v_seq_count =1 then
+        
+            SELECT seq_value from sw_sequence_mast WHERE seq_name = v_seq_name and seq_status ='A' into v_seq_val;
+			
+            v_seq_val := v_seq_val + 1;
+           
+			SELECT seq_length from sw_sequence_mast WHERE seq_name = v_seq_name and seq_status ='A' into v_seq_len;
+			SELECT seq_prefix from sw_sequence_mast WHERE seq_name = v_seq_name and seq_status ='A' into v_seq_prx;
+
+			UPDATE sw_sequence_mast 
+				SET seq_value = v_seq_val
+	       		WHERE seq_name = v_seq_name and seq_status ='A';
+	       	
+	       	    v_seq_1 := v_seq_val;
+                v_seq := concat(v_seq_prx,(select lpad(v_seq_1,v_seq_len,'0')));
+			RETURN 	v_seq;
+	    ELSE
+	   		return '000001';
+        END IF;
+ EXCEPTION
+    WHEN no_data_found THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+        RETURN '{"status":"Failed","message":"No data found"}';
+
+    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+        RETURN '{"status":"Failed","message":"Unexpected server error"}';   
+END;$function$;
+
+--
+-- Procedure structure for proc_movies_create
+--
+CREATE OR REPLACE PROCEDURE proc_movies_create(v_name varchar(30), v_desc varchar(100), v_release_date date, v_ticket_price double, v_country varchar(50), v_genre text, v_photo varchar(150), INOUT flag text)
+ LANGUAGE plpgsql
+ AS $procedure$
+ DECLARE v_movie_id    app_movies.id%TYPE;
+
+ DECLARE v_err_mesg     varchar(32767);
+ DECLARE v_err_state    varchar(32767);
+
+ DECLARE v_result_json    	TEXT;
+ BEGIN
+	  
+	   SELECT fn_sm_get_seq('MovieId') into v_movie_id;
+   
+       INSERT INTO public.app_movies(id, name,description, release_date, ticket_price, country, genre, photo) 
+       VALUES (v_movie_id, v_name, v_desc, v_release_date, v_ticket_price, v_country, v_genre, v_photo);	
+
+        v_result_json := '{"status":"OK","message":"Movie created successfully","MovieId":"'||v_movie_id||'"}';
+       
+       --Return param
+       flag :=v_result_json;
+      
+ EXCEPTION
+ 	    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+       
+        --Return param
+        v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
+
+ flag := flag;
+END $procedure$;
+
+--
+-- Procedure structure for proc_get_movie
+--
+CREATE OR REPLACE PROCEDURE proc_get_movie(INOUT flag text)
+ LANGUAGE plpgsql
+ AS $procedure$
+
+	DECLARE cur_movies CURSOR FOR
+        SELECT id, name, description, 
+               release_date, ticket_price, country, genre, photo
+        FROM app_movies
+        WHERE wm.profile_id = v_profile_id;
+
+	DECLARE v_movies_json       TEXT;
+    DECLARE v_result_json    	TEXT; 
+	DECLARE v_session_count 	INT;
+    DECLARE v_err_state         varchar(32767);
+ 	DECLARE v_err_mesg        	VARCHAR(32767);
+ BEGIN
+	 v_movies_json := '[';
+	 FOR movie IN cur_movies LOOP
+         v_movies_json :=v_movies_json
+		   ||	'{"MOVIE_ID":"'|| movie.id
+           || '","NAME":"'|| movie.name
+           || '","DESCRIPTION":"'|| movie.description
+           || '","RELEASE_DATE":"'|| movie.release_date
+           || '","TICKET_PRICE":"'|| movie.ticket_price
+           || '","COUNTRY":"'|| movie.country
+           || '","GENRE":"'|| movie.genre
+           || '","PHOTO":"'|| movie.photo
+           || '"},';
+ 	 END LOOP;
+
+     IF v_movies_json ='[' THEN
+        v_movies_json :='[';
+     ELSE    
+        SELECT substr(v_movies_json,0,length(v_movies_json) - 0)
+        INTO v_movies_json;
+     END IF;
+
+	    v_movies_json := v_movies_json || ']';
+        v_result_json := ( '{"status":"OK","movieListing":' || v_movies_json || '}' );
+       
+       --Return param
+       flag :=v_result_json;
+     
+ EXCEPTION
+ 	    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+       
+        --Return param
+        v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
+    
+ flag :=v_result_json;
+END $procedure$;
+
+--
+-- Procedure structure for proc_user_create
+--
+CREATE OR REPLACE PROCEDURE proc_user_create(v_username varchar(50), v_userpassword varchar(500), v_firstname varchar(100), v_lastname varchar(100), v_email varchar(100), v_address varchar(800), v_country varchar(50), INOUT flag text)
+ LANGUAGE plpgsql
+ AS $procedure$
+ DECLARE v_user_id    app_users.id%TYPE;
+
+ DECLARE v_err_mesg     varchar(32767);
+ DECLARE v_err_state    varchar(32767);
+
+ DECLARE v_result_json    	TEXT;
+ BEGIN
+	  
+	SELECT fn_sm_get_seq('UserId', 'PRO000001122367') into v_user_id;
+   
+
+       INSERT INTO app_users(id, username, userpassword, firstname, lastname, email, address, country) 
+       VALUES (v_user_id, v_username, v_userpassword, v_firstname, v_lastname, v_email, v_address, v_country);	
+
+        v_result_json := '{"status":"OK","message":"User created successfully","UserId":"'||v_user_id||'"}';
+       
+       --Return param
+       flag :=v_result_json;
+      
+ EXCEPTION
+ 	    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+       
+        --Return param
+        v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
+
+ flag := flag;
+END $procedure$;
+
+--
+-- Procedure structure for poc_get_user
+--
+CREATE OR REPLACE PROCEDURE poc_get_user(INOUT flag text)
+ LANGUAGE plpgsql
+ AS $procedure$
+
+	DECLARE cur_users CURSOR FOR
+        SELECT au.id, au.username, au.firstname, au.lastname, au.email, au.address, au.country
+        FROM app_users au;
+
+	DECLARE v_user_json       TEXT;
+    DECLARE v_result_json    	TEXT; 
+	DECLARE v_session_count 	INT;
+    DECLARE v_err_state         varchar(32767);
+ 	DECLARE v_err_mesg        	VARCHAR(32767);
+ BEGIN
+	 v_user_json := '[';
+	 FOR users IN cur_users LOOP
+         v_user_json :=v_user_json
+		   ||	'{"USER_ID":"'|| users.id
+           || '","USERNAME":"'|| users.username
+           || '","FIRSTNAME":"'|| users.firstname
+           || '","LASTNAME":"'|| users.lastname
+           || '","EMAIL":"'|| users.email
+           || '","ADDRESS":"'|| users.address
+           || '","COUNTRY":"'|| users.country
+           || '"},';
+ 	 END LOOP;
+
+     IF v_user_json ='[' THEN
+        v_user_json :='[';
+     ELSE    
+        SELECT substr(v_user_json,0,length(v_user_json) - 0)
+        INTO v_user_json;
+     END IF;
+
+	    v_user_json := v_user_json || ']';
+        v_result_json := ( '{"status":"OK","walletListing":' || v_user_json || '}' );
+       
+       --Return param
+       flag :=v_result_json;
+     
+ EXCEPTION
+ 	    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+       
+        --Return param
+        v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
+       
+       
+ flag :=v_result_json;
+END $procedure$;
+
+--
+-- Procedure structure for proc_comment_create
+--
+CREATE OR REPLACE PROCEDURE proc_comment_create(v_user_id varchar(15), v_movie_name varchar(30), v_comment varchar(100), INOUT flag text)
+ LANGUAGE plpgsql
+ AS $procedure$
+ DECLARE v_comment_id    app_comments.id%TYPE;
+
+ DECLARE v_err_mesg     varchar(32767);
+ DECLARE v_err_state    varchar(32767);
+
+ DECLARE v_result_json    	TEXT;
+ BEGIN
+	  
+	SELECT fn_sm_get_seq('CommentId', 'PRO000001122367') into v_comment_id;
+   
+
+       INSERT INTO app_comments(id, movie_name, user_comment) 
+       VALUES (v_comment_id, v_movie_name, v_comment);	
+
+        v_result_json := '{"status":"OK","message":"Comment created successfully","CommentId":"'||v_comment_id||'"}';
+       
+       --Return param
+       flag :=v_result_json;
+      
+ EXCEPTION
+ 	    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+       
+        --Return param
+        v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
+
+ flag := flag;
+END $procedure$;
+
+--
+-- Procedure structure for proc_get_comment
+--
+CREATE OR REPLACE PROCEDURE proc_get_comments(INOUT flag text)
+ LANGUAGE plpgsql
+ AS $procedure$
+
+	DECLARE cur_comments CURSOR FOR
+        SELECT id, movie_name, user_comments
+        FROM app_comments;
+
+	DECLARE v_comm_json         TEXT;
+    DECLARE v_result_json    	TEXT; 
+	DECLARE v_session_count 	INT;
+    DECLARE v_err_state         varchar(32767);
+ 	DECLARE v_err_mesg        	VARCHAR(32767);
+ BEGIN
+	 v_comm_json := '[';
+	 FOR comm IN cur_comments LOOP
+         v_comm_json :=v_comm_json
+		   ||	'{"MOVIE_ID":"'|| comm.id
+           || '","MOVIE_NAME":"'|| comm.movie_name
+           || '","USER_COMMENTS":"'|| comm.user_comments
+           || '"},';
+ 	 END LOOP;
+
+     IF v_comm_json ='[' THEN
+        v_comm_json :='[';
+     ELSE    
+        SELECT substr(v_comm_json,0,length(v_comm_json) - 0)
+        INTO v_comm_json;
+     END IF;
+
+	    v_comm_json := v_comm_json || ']';
+        v_result_json := ( '{"status":"OK","commentListing":' || v_comm_json || '}' );
+       
+       --Return param
+       flag :=v_result_json;
+     
+ EXCEPTION
+ 	    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+       
+        --Return param
+        v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
+       
+       
+ flag :=v_result_json;
+END $procedure$;
+
+--
+-- Procedure structure for proc_validate_user
+--
+CREATE OR REPLACE PROCEDURE proc_validate_user(v_user_id varchar(50), v_password varchar(500), INOUT flag text)
+ LANGUAGE plpgsql
+ AS $procedure$
+ DECLARE v_db_user_pwd    app_users.userpassword%TYPE;
+
+ DECLARE v_err_mesg     varchar(32767);
+ DECLARE v_err_state    varchar(32767);
+
+ DECLARE v_result_json    	TEXT;
+ BEGIN
+	  
+	  SELECT userpassword INTO v_db_user_pwd 
+      FROM app_users
+      WHERE username = v_user_id;
+     
+      IF v_password != v_db_user_pwd THEN
+        v_result_json := '{"status":"Failed","message":"Login  not Successful!"}';
+        --Return param
+        flag :=v_result_json;
+      ELSE
+          v_result_json := '{"status":"OK","message":"Login Successful!"}';
+          --Return param
+          flag :=v_result_json;
+      END IF;
+      
+ EXCEPTION
+ 	    WHEN OTHERS THEN
+        v_err_mesg := sqlerrm;
+        v_err_state := sqlstate;
+       
+        --Return param
+        v_result_json := '{"status":"Failed","message":"Unexpected Server Error"}';
+
+ flag := flag;
+END $procedure$;
+ 
