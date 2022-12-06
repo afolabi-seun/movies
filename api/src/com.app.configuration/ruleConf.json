@@ -28,9 +28,6 @@
       "address": "required|string",
       "country": "required|string"
     },
-    "listComment": {
-      "userId": "string"
-    },
     "commentCreation": {
       "userId": "required|string",
       "movieId": "required|string",

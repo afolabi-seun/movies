@@ -10,31 +10,17 @@ define(function () {
 
     function GetComment(req, res, next) {
         try {
-            const validationRule = rulecfg.validation.listUsers;
-            validation.Validator(req.body, validationRule, {}, (err, status) => {
-                if (!status) {
-                    dispatch.SendBadRequestMessage(res, err);
-                    logger.error('/getComments', err);
+            let parm = {};
+            commentDAO.ListCommentSQL(parm, (err, data) => {
+                if (err) {
+                    dispatch.SendDataBaseErrorMessage(res, err);
                 } else {
-                    var userId = req.body.userId,
-                        session = req.headers['apisessionkey'];
-                    var jsnReq = { userId: userId, session: session },
-                        jsnDta = JSON.stringify(jsnReq);
-
-                    logger.info('/getComments', jsnDta);
-
-                    let parm = { userId: userId, session: session };
-                    commentDAO.ListCommentSQL(parm, (err, data) => {
-                        if (err) {
-                            dispatch.SendDataBaseErrorMessage(res, err);
-                        } else {
-                            var dt = JSON.parse(data);
-                            logger.info('/getComments', data);
-                            dispatch.SendGenricMessage(res, dt);
-                        }
-                    });
+                    var dt = JSON.parse(data);
+                    logger.info('/getComments', data);
+                    dispatch.SendGenricMessage(res, dt);
                 }
             });
+
         } catch (e) {
             logger.error('/getUser', e);
             dispatch.DispatchErrorMessage(res, 'application error in GetUser()..');
