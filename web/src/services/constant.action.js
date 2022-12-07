@@ -1,0 +1,19 @@
+/** CONSTANTS LIST */
+export const cnt = {
+  /** ALERT */
+  WARNING: "WARNING",
+  SUCCESS: "SUCCESS",
+  DANGER: "DANGER",
+  INFO: "INFO",
+  PROCESS: "PROCESS",
+  LOAD: "LOAD",
+  COPIED: "COPIED",
+
+  /** AUTH */
+  SIGN_IN: "SIGN_IN",
+  SIGN_OUT: "SIGN_OUT",
+  SIGN_UP: "SIGN_UP",
+  AUTH_BUFFER: "AUTH_BUFFER",
+  LOCKSCREEN: "LOCKSCREEN",
+  
+};

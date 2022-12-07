@@ -1,0 +1,17 @@
+{
+  "isProduction":false,
+    "dev":{
+      "baseURL":"http://localhost:8081/movie/api/",
+      "officeURL":""
+    },
+    "prod":{
+      "baseURL":"https://ncareservice.nacomoda.com/",
+      "officeURL":""
+    },
+  "apiSettings":{
+    "headers": {
+      "Content-Type": "application/json",
+      "uikey": "movieKitkey"
+    }
+  }
+}
